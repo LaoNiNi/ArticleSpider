@@ -68,7 +68,8 @@ ROBOTSTXT_OBEY = False
 ITEM_PIPELINES = {
    'ArticleSpider.pipelines.ArticlespiderPipeline': 300,
        # 'scrapy.pipelines.images.ImagesPipeline':1,
-        'ArticleSpider.pipelines.JsonExporterPipeline':2,
+       # 'ArticleSpider.pipelines.JsonExporterPipeline':2,
+        'ArticleSpider.pipelines.MysqlPipeline':3,
 }
 #告诉pipline是取哪个字段下载图片
 IMAGES_URLS_FIELD = "front_image_url"

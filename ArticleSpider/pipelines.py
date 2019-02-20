@@ -5,6 +5,8 @@
 # Don't forget to add your pipeline to the ITEM_PIPELINES setting
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import codecs,json
+import pymysql
+
 
 from scrapy.exporters import JsonItemExporter
 
@@ -41,5 +43,31 @@ class JsonExporterPipeline(object):
         return item
 
 
-#
+class MysqlPipeline(object):
+    def __init__(self):
+        self.conn = pymysql.connect('localhost','root','123456','learn_scrapy',charset='utf8',use_unicode=True)
+        self.cursor = self.conn.cursor()
 
+    def process_item(self,item,spider):
+        """
+        :param item:
+        :param spider:
+        :return:
+        """
+
+        a = 1
+        insert_sql ="""insert into jobble(title,front_image_url,front_image_path,create_date,praise_nums,comment_nums,
+fav_nums,url,url_object_id,tag_list,tags,content) 
+values ('{title}','{front_image_url}','{front_image_path}','{create_date}',{praise_nums},{comment_nums},{fav_nums},
+'{url}','{url_object_id}','{tag_list}','{tags}','{content}')"""
+        insert_sql2 = insert_sql.format(title=item['title'],front_image_url=item['front_image_url'][0],front_image_path=item['front_image_path'],
+                                        create_date=item['create_date'], praise_nums=item['praise_nums'],comment_nums=item['comment_nums'],
+                                        fav_nums=item['fav_nums'],url=item['url'],
+                                        url_object_id=item['url_object_id'],tag_list=item['tag_list'],tags=item['tags'],content=item['content'])
+        # for x,y in item:
+        #     print("$$$$$$$$",type(x))
+        # self.cursor.execute(insert_sql,(item['title'],item['front_image_url'][0],item['front_image_path'],item['create_date'],
+        #                                 item['praise_nums'],item['comment_nums'],item['fav_nums'],item['url'],
+        #                                 item['url_object_id'],item['tag_list'],item['tags'],item['content']))
+        self.cursor.execute(insert_sql2)
+        self.conn.commit()

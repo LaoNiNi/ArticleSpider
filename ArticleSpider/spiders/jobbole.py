@@ -75,21 +75,24 @@ class JobboleSpider(scrapy.Spider):
             fav_nums = 0
 
         url = response.url
-        url_object_id = hashlib.md5(url).hexdigest()
+        url_object_id = hashlib.md5(url.encode('utf-8')).hexdigest()
         #内容
         content = response.xpath('//div[@class="entry"]').extract()[0]
 
         #给item对象填充值
         article_item['title'] = title
         article_item['front_image_url'] = [front_image_url]
-        article_item['create_date'] = create_date
-        article_item['praise_nums'] = praise_num
-        article_item['comment_nums'] = comment_num
-        article_item['fav_nums'] = fav_nums
+        article_item['front_image_path'] = "path"
+        article_item['create_date'] = str(create_date)
+        article_item['praise_nums'] = int(praise_num)
+        article_item['comment_nums'] = int(comment_num)
+        article_item['fav_nums'] = int(fav_nums)
+        article_item['url'] = url
+        article_item['url_object_id'] = url_object_id
         article_item['tag_list'] = tag_list
         article_item['tags'] = tags
         article_item['content'] = content
-        article_item['url'] = url
-        article_item['url_object_id'] = url_object_id
+
+
         #把item传给pipelines
         yield article_item

@@ -29,3 +29,4 @@ class JobBoleArticleItem(scrapy.Item):
     tag_list = scrapy.Field()
     tags = scrapy.Field()
     content = scrapy.Field()
+
