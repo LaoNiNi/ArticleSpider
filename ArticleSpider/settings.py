@@ -69,7 +69,7 @@ ITEM_PIPELINES = {
    'ArticleSpider.pipelines.ArticlespiderPipeline': 300,
        # 'scrapy.pipelines.images.ImagesPipeline':1,
        # 'ArticleSpider.pipelines.JsonExporterPipeline':2,
-        'ArticleSpider.pipelines.MysqlPipeline':3,
+        'ArticleSpider.pipelines.MysqlTwistedPipline':3,
 }
 #告诉pipline是取哪个字段下载图片
 IMAGES_URLS_FIELD = "front_image_url"
@@ -103,3 +103,9 @@ IMAGES_STORE = os.path.join(project_dir,'images')
 # LOG_LEVEL = "DEBUG"
 # LOG_STDOUT = "True"
 
+#配置mysql
+MYSQL_HOST = "localhost"
+MYSQL_DBNAME = "learn_scrapy"
+MYSQL_USER = "root"
+MYSQL_PASSWORD = "123456"
+MYSQL_PORT = 3306

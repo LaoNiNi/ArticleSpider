@@ -6,8 +6,9 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import codecs,json
 import pymysql
+import pymysql.cursors
 
-
+from twisted.enterprise import adbapi
 from scrapy.exporters import JsonItemExporter
 
 class ArticlespiderPipeline(object):
@@ -71,3 +72,58 @@ values ('{title}','{front_image_url}','{front_image_path}','{create_date}',{prai
         #                                 item['url_object_id'],item['tag_list'],item['tags'],item['content']))
         self.cursor.execute(insert_sql2)
         self.conn.commit()
+
+#使用scrapy提供的twisted，实现mysql异步插入，避免由于数据存储造成的阻塞。
+class MysqlTwistedPipline(object):
+    def __init__(self,dbpool):
+        self.dbpool = dbpool
+
+
+    @classmethod#创建这个名称固定的类方法，可以获取到settings的配置。
+    def from_settings(cls,settings):
+        #这里的mysql参数名称是固定的，可以去connection类里查看有哪些参数。
+        db_dict = dict(
+        host = settings["MYSQL_HOST"],
+        database = settings["MYSQL_DBNAME"],
+        user = settings["MYSQL_USER"],
+        password = settings["MYSQL_PASSWORD"],
+        port = settings["MYSQL_PORT"],
+        #设置编码
+        charset = 'utf8',
+        #这个参数可以让mysql 返回结果包含字段
+        cursorclass = pymysql.cursors.DictCursor,
+        use_unicode = True
+        )
+
+        #建立连接池,通过dict传连接信息
+        dbpool = adbapi.ConnectionPool("pymysql",**db_dict)
+        #返回一个连接池实例对象
+        return cls(dbpool)
+
+    def process_item(self,item,spider):
+        """使用twisted将mysql插入异步执行
+        :param item:
+        :param spider:
+        :return:
+        """
+        query = self.dbpool.runInteraction(self.do_insert,item)
+        #因为是异步的，所以报错时不会停下来，这里支持添加抛异常的方法
+        query.addErrback(self.handle_error)#处理异常
+
+    def handle_error(self,failure):
+        #处理异步插入的异常
+        print(failure)
+
+
+    def do_insert(self,cursor,item):
+
+        insert_sql ="""insert into jobble(title,front_image_url,front_image_path,create_date,praise_nums,comment_nums,
+                           fav_nums,url,url_object_id,tag_list,tags,content) 
+                           values ('{title}','{front_image_url}','{front_image_path}','{create_date}',{praise_nums},{comment_nums},
+                           {fav_nums},'{url}','{url_object_id}','{tag_list}','{tags}','{content}')"""
+        insert_sql2 = insert_sql.format(title=item['title'],front_image_url=item['front_image_url'][0],
+                                            front_image_path=item['front_image_path'],create_date=item['create_date'],
+                                            praise_nums=item['praise_nums'],comment_nums=item['comment_nums'],fav_nums=item['fav_nums'],
+                                            url=item['url'],url_object_id=item['url_object_id'],tag_list=item['tag_list'],
+                                            tags=item['tags'],content=item['content'])
+        cursor.execute(insert_sql2)
