@@ -3,7 +3,9 @@ import scrapy
 import re,datetime,hashlib
 from scrapy.http import Request
 from ArticleSpider.items import JobBoleArticleItem
+from ArticleSpider.items import ArticleItemLoader
 from urllib import parse
+from scrapy.loader import ItemLoader
 class JobboleSpider(scrapy.Spider):
     name = 'jobbole'
     allowed_domains = ['blog.jobbole.com']
@@ -80,18 +82,41 @@ class JobboleSpider(scrapy.Spider):
         content = response.xpath('//div[@class="entry"]').extract()[0]
 
         #给item对象填充值
-        article_item['title'] = title
-        article_item['front_image_url'] = [front_image_url]
-        article_item['front_image_path'] = "path"
-        article_item['create_date'] = str(create_date)
-        article_item['praise_nums'] = int(praise_num)
-        article_item['comment_nums'] = int(comment_num)
-        article_item['fav_nums'] = int(fav_nums)
-        article_item['url'] = url
-        article_item['url_object_id'] = url_object_id
-        article_item['tag_list'] = tag_list
-        article_item['tags'] = tags
-        article_item['content'] = content
+        # article_item['title'] = title
+        # article_item['front_image_url'] = [front_image_url]
+        # article_item['front_image_path'] = "path"
+        # article_item['create_date'] = str(create_date)
+        # article_item['praise_nums'] = int(praise_num)
+        # article_item['comment_nums'] = int(comment_num)
+        # article_item['fav_nums'] = int(fav_nums)
+        # article_item['url'] = url
+        # article_item['url_object_id'] = url_object_id
+        # article_item['tag_list'] = tag_list
+        # article_item['tags'] = tags
+        # article_item['content'] = content
+
+
+        #通过item_loader加载item
+        item_loader = ArticleItemLoader(item=JobBoleArticleItem(),response=response)
+        # item_loader.add_css()根据css
+        # item_loader.add_xpath()根据xpath
+        # item_loader.add_value()根据value
+        item_loader.add_xpath("title",'/html/body/div[1]/div[3]/div[1]/div[@class="entry-header"]/h1')
+        item_loader.add_xpath("create_date",'/html/body/div[@id="wrapper"]/div[@class="grid-8"]/div[1]/div[2]/p/text()')
+        item_loader.add_xpath("praise_nums",'//span[contains(@class,"vote-post-up")]/h10/text()')
+        item_loader.add_xpath("comment_nums",'//a[@href="#article-comment"]/span/text()')
+        item_loader.add_xpath("fav_nums",'//div[@class="post-adds"]/span[2]/text()')
+        item_loader.add_xpath("tag_list",'//p[@class="entry-meta-hide-on-mobile"]/a/text()')
+        item_loader.add_xpath("tags",'//p[@class="entry-meta-hide-on-mobile"]/a/text()')
+        item_loader.add_xpath("content",'//div[@class="entry"]')
+        item_loader.add_value("front_image_url",response.meta.get("front_image_url",""))
+        item_loader.add_value("front_image_path","path")
+        item_loader.add_value("url",response.url)
+        item_loader.add_value("url_object_id",hashlib.md5(url.encode('utf-8')).hexdigest())
+
+        #通过调用load_item方法，item_loader才会去解析
+        article_item = item_loader.load_item()
+
 
 
         #把item传给pipelines

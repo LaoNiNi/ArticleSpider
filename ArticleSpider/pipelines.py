@@ -6,7 +6,8 @@
 # See: https://doc.scrapy.org/en/latest/topics/item-pipeline.html
 import codecs,json
 import pymysql
-import pymysql.cursors
+# import pymysql.cursors
+from pymysql import cursors
 
 from twisted.enterprise import adbapi
 from scrapy.exporters import JsonItemExporter
@@ -89,9 +90,9 @@ class MysqlTwistedPipline(object):
         password = settings["MYSQL_PASSWORD"],
         port = settings["MYSQL_PORT"],
         #设置编码
-        charset = 'utf8',
+        charset = 'utf8mb4',
         #这个参数可以让mysql 返回结果包含字段
-        cursorclass = pymysql.cursors.DictCursor,
+        cursorclass = cursors.DictCursor,
         use_unicode = True
         )
 
