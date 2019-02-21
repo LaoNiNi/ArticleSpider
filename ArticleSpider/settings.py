@@ -109,3 +109,6 @@ MYSQL_DBNAME = "learn_scrapy"
 MYSQL_USER = "root"
 MYSQL_PASSWORD = "123456"
 MYSQL_PORT = 3306
+
+
+COMMANDS_MODULE = 'ArticleSpider.commands'

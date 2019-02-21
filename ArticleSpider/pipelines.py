@@ -109,11 +109,11 @@ class MysqlTwistedPipline(object):
         """
         query = self.dbpool.runInteraction(self.do_insert,item)
         #因为是异步的，所以报错时不会停下来，这里支持添加抛异常的方法
-        query.addErrback(self.handle_error)#处理异常
-
-    def handle_error(self,failure):
-        #处理异步插入的异常
-        print(failure)
+    #     query.addErrback(self.handle_error)#处理异常
+    #
+    # def handle_error(self,failure):
+    #     #处理异步插入的异常
+    #     print(failure)
 
 
     def do_insert(self,cursor,item):
@@ -127,4 +127,7 @@ class MysqlTwistedPipline(object):
                                             praise_nums=item['praise_nums'],comment_nums=item['comment_nums'],fav_nums=item['fav_nums'],
                                             url=item['url'],url_object_id=item['url_object_id'],tag_list=item['tag_list'],
                                             tags=item['tags'],content=item['content'])
-        cursor.execute(insert_sql2)
+        try:
+            cursor.execute(insert_sql2)
+        except:
+            print("[error]",insert_sql2)
