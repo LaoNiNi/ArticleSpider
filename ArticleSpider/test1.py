@@ -19,3 +19,6 @@ info2 = {"aa":3,"bb":4}
 
 aa = '  收藏'
 print(aa.strip().replace("收藏",""))
+
+D:\software\pycharm\helpers\pydev\_pydevd_bundle\pydevd_comm.py
+375hang

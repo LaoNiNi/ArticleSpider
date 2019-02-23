@@ -33,7 +33,7 @@ ROBOTSTXT_OBEY = False
 #CONCURRENT_REQUESTS_PER_IP = 16
 
 # Disable cookies (enabled by default)
-#COOKIES_ENABLED = False
+COOKIES_ENABLED = True
 
 # Disable Telnet Console (enabled by default)
 #TELNETCONSOLE_ENABLED = False
@@ -111,4 +111,6 @@ MYSQL_PASSWORD = "123456"
 MYSQL_PORT = 3306
 
 
-COMMANDS_MODULE = 'ArticleSpider.commands'
+#COMMANDS_MODULE = 'ArticleSpider.commands'
+
+dont_filter=True
