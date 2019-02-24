@@ -69,7 +69,7 @@ class ZhihuSpider(scrapy.Spider):
             f.close()
             cookie_dict[cookie['name']] = cookie['value']
         browser.close()
-        return Request(url="https://www.zhihu.com/",headers=self.headers,cookies=cookie_dict,callback=self.check_login)
+        return Request(url=r"https://www.zhihu.com/",headers=self.headers,cookies=cookie_dict,callback=self.check_login)
 
     def check_login(self,response):
         response_text = response.text
