@@ -9,8 +9,8 @@ import scrapy,re,datetime,hashlib
 #使用MapCompose可以拿到返回结果后执行某些函数,TakeFirst取数组第一个值
 from scrapy.loader.processors import MapCompose,TakeFirst
 from scrapy.loader import ItemLoader
-
-class ArticleItemLoader(ItemLoader):
+import scrapy.item
+class CustnomItemLoader(ItemLoader):
     #自定义ItemLoader
     default_output_processor = TakeFirst()
 
@@ -80,4 +80,37 @@ class JobBoleArticleItem(scrapy.Item):
     tag_list = scrapy.Field()
     tags = scrapy.Field()
     content = scrapy.Field()
+
+#知乎问答item
+class ZhihuQuestionItem(scrapy.item):
+    """
+    知乎问题item
+    """
+    zhihu_id = scrapy.Field()
+    topics = scrapy.Field()
+    url = scrapy.Field()
+    title = scrapy.Field()
+    content = scrapy.Field()
+    create_time = scrapy.Field()
+    update_time = scrapy.Field()
+    answer_num = scrapy.Field()
+    comments_num = scrapy.Field()
+    watch_user_num = scrapy.Field()
+    click_num = scrapy.Field()
+    crawl_time = scrapy.Field()
+    crawl_update_time = scrapy.Field()
+
+class ZhihuAnswerItem(scrapy.item):
+    #z知乎回答item
+    zhihu_id = scrapy.Field()
+    url = scrapy.Field()
+    question_id = scrapy.Field()
+    author_id = scrapy.Field()
+    content = scrapy.Field()
+    praise_num = scrapy.Field()
+    comments_num = scrapy.Field()
+    create_time = scrapy.Field()
+    update_time = scrapy.Field()
+    crawl_time = scrapy.Field()
+    crawl_update_time = scrapy.Field()
 

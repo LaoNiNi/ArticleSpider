@@ -3,7 +3,7 @@ import scrapy
 import re,datetime,hashlib
 from scrapy.http import Request
 from ArticleSpider.items import JobBoleArticleItem
-from ArticleSpider.items import ArticleItemLoader
+from ArticleSpider.items import CustnomItemLoader
 from urllib import parse
 from scrapy.loader import ItemLoader
 class JobboleSpider(scrapy.Spider):
@@ -97,7 +97,7 @@ class JobboleSpider(scrapy.Spider):
 
 
         #通过item_loader加载item
-        item_loader = ArticleItemLoader(item=JobBoleArticleItem(),response=response)
+        item_loader = CustnomItemLoader(item=JobBoleArticleItem(),response=response)
         # item_loader.add_css()根据css
         # item_loader.add_xpath()根据xpath
         # item_loader.add_value()根据value
